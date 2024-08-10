@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        body{
+            background-color: rgb(25, 25, 25);
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .title{
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .move-icon{
+            height: 50px;
+        }
+        .move-button{
+            background-color: transparent;
+            border: 2px solid white;
+            border-radius: 50%;
+            margin: 5px;
+            padding: 20px;
+            cursor: pointer;
+        }
+        .result{
+            font-size: 25px;
+            font-weight: bold;
+            margin-top: 50px;
+        }
+        .reset-score-button{
+            background-color: white;
+            border: none;
+            font-size: 15px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <p class="title">Rock Paper Scissors</p>
+    <button onclick="playGame('rock');" class="move-button"><img src="images\rock-emoji.png" alt="Rock" class="move-icon"></button>
+    <button onclick="playGame('paper');" class="move-button"><img src="images/paper-emoji.png" alt="Paper" class="move-icon"></button>
+    <button onclick="playGame('scissors');" class="move-button"><img src="images/scissors-emoji.png" alt="Scissors" class="move-icon"></button>
+
+    <p class="js-result result"></p>
+    <p class="js-moves moves">
+    </p>
+    <p class="js-score score"></p>
+
+    <button onclick="
+    score.wins=0;
+    score.losses=0;
+    score.ties=0;
+    localStorage.removeItem('score');
+    localStorage.setItem('score', JSON.stringify(score));
+    updateScoreElement();
+    " class="reset-score-button">Reset Score</button>
+
+</body>
+<script>
+    let score = JSON.parse(localStorage.getItem('score')) || {
+        wins: 0,
+        losses: 0,
+        ties: 0
+    };
+
+    updateScoreElement();
+
+    function playGame(playerMove) {
+        const computerMove = pickComputerMove();
+        let result = '';
+
+        if (playerMove === 'scissors') {
+            if (computerMove === 'rock') {
+                result = 'You Lose.';
+            } else if (computerMove === 'paper') {
+                result = 'You Win.';
+            } else if (computerMove === 'scissors') {
+                result = 'Tie.';
+            }
+        } else if (playerMove === 'rock') {
+            if (computerMove === 'rock') {
+                result = 'Tie.';
+            } else if (computerMove === 'paper') {
+                result = 'You Lose.';
+            } else if (computerMove === 'scissors') {
+                result = 'You Win.';
+            }
+        } else if (playerMove === 'paper') {
+            if (computerMove === 'rock') {
+                result = 'You Win.';
+            } else if (computerMove === 'paper') {
+                result = 'Tie.';
+            } else if (computerMove === 'scissors') {
+                result = 'You Lose.';
+            }
+        }
+
+        if (result === 'You Win.') {
+            score.wins++;
+        } else if (result === 'You Lose.') {
+            score.losses++;
+        } else if (result === 'Tie.') {
+            score.ties++;
+        }
+
+        updateScoreElement();
+        document.querySelector('.js-result').innerHTML = result;
+        document.querySelector('.js-moves').innerHTML = `You 
+        <img src="images/${playerMove}-emoji.png" class="move-icon">
+        <img src="images/${computerMove}-emoji.png" class="move-icon">
+        Computer`;
+    }
+
+    function updateScoreElement() {
+        document.querySelector('.js-score').innerHTML =
+            `Wins: ${score.wins}, Losses: ${score.losses}, Ties: ${score.ties}`;
+    }
+
+    function pickComputerMove() {
+        const moves = ['rock', 'paper', 'scissors'];
+        const randomIndex = Math.floor(Math.random() * moves.length);
+        return moves[randomIndex];
+    }
+</script>
+
+</html>
